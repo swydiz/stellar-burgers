@@ -1,11 +1,21 @@
-import { FC } from 'react';
-import { useLocation } from 'react-router-dom';
 import { ProfileMenuUI } from '@ui';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '../../services/hooks/hooks';
+import { clearUser } from '../../services/reducers/userSlice';
+import { deleteCookie } from '../../utils/cookie';
 
-export const ProfileMenu: FC = () => {
-  const { pathname } = useLocation();
+export const ProfileMenu = () => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
-  const handleLogout = () => {};
+  const handleLogout = () => {
+    deleteCookie('accessToken');
+    localStorage.removeItem('refreshToken');
+    dispatch(clearUser());
+    navigate('/login', { replace: true });
+  };
 
-  return <ProfileMenuUI handleLogout={handleLogout} pathname={pathname} />;
+  return (
+    <ProfileMenuUI pathname={location.pathname} handleLogout={handleLogout} />
+  );
 };

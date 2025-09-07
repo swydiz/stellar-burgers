@@ -1,7 +1,9 @@
+export type TTabMode = 'bun' | 'sauce' | 'main';
+
 export type TIngredient = {
   _id: string;
   name: string;
-  type: string;
+  type: TTabMode;
   proteins: number;
   fat: number;
   carbohydrates: number;
@@ -13,7 +15,8 @@ export type TIngredient = {
 };
 
 export type TConstructorIngredient = TIngredient & {
-  id: string;
+  id?: string;
+  uid?: string;
 };
 
 export type TOrder = {
@@ -36,5 +39,3 @@ export type TUser = {
   email: string;
   name: string;
 };
-
-export type TTabMode = 'bun' | 'sauce' | 'main';

@@ -8,7 +8,6 @@ type TOrderInfo = {
   ingredientsInfo: {
     [key: string]: TIngredient & { count: number };
   };
-  date: Date;
   total: number;
   _id: string;
   status: string;
