@@ -1,14 +1,14 @@
 import { FC, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { TConstructorIngredient, TOrder } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
-import { useAppSelector } from '../../services/hooks/hooks';
+import { useAppSelector, useAppDispatch } from '../../services/hooks/hooks';
 import { addOrder, clearOrder } from '../../services/reducers/ordersSlice';
 import { orderBurgerApi } from '../../utils/burger-api';
+import { clearConstructor } from '../../services/reducers/constructorSlice';
 
 export const BurgerConstructor: FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const isAuthenticated = useAppSelector((state) => state.user.isAuthenticated);
@@ -37,8 +37,6 @@ export const BurgerConstructor: FC = () => {
       const data = await orderBurgerApi(ingredientIds);
       setOrderModalData(data.order);
       dispatch(addOrder(data.order));
-
-      navigate(`/order/${data.order.number}`);
     } catch (err) {
       console.error('Ошибка при создании заказа:', err);
     } finally {
@@ -49,6 +47,7 @@ export const BurgerConstructor: FC = () => {
   const closeOrderModal = () => {
     setOrderModalData(null);
     dispatch(clearOrder());
+    dispatch(clearConstructor());
   };
 
   const price = useMemo(

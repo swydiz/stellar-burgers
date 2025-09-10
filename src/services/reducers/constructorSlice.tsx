@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TConstructorIngredient, TOrder } from '@utils-types';
+import { nanoid } from 'nanoid';
 
 interface ConstructorState {
   bun: TConstructorIngredient | null;
@@ -20,14 +21,17 @@ const constructorSlice = createSlice({
   initialState,
   reducers: {
     setBun(state, action: PayloadAction<TConstructorIngredient>) {
-      state.bun = action.payload;
+      state.bun = { ...action.payload, id: nanoid() };
     },
     addIngredient(state, action: PayloadAction<TConstructorIngredient>) {
-      state.ingredients = [...state.ingredients, action.payload];
+      state.ingredients = [
+        ...state.ingredients,
+        { ...action.payload, id: nanoid() }
+      ];
     },
     removeIngredient(state, action: PayloadAction<string>) {
       state.ingredients = state.ingredients.filter(
-        (item) => item.uid !== action.payload
+        (item) => item.id !== action.payload
       );
     },
     clearConstructor(state) {
@@ -45,10 +49,10 @@ const constructorSlice = createSlice({
       action: PayloadAction<{ fromIndex: number; toIndex: number }>
     ) {
       const { fromIndex, toIndex } = action.payload;
-      const ingredientsCopy = [...state.ingredients];
-      const [itemToMove] = ingredientsCopy.splice(fromIndex, 1);
-      ingredientsCopy.splice(toIndex, 0, itemToMove);
-      state.ingredients = ingredientsCopy;
+      const ingredientsList = [...state.ingredients];
+      const [movedItem] = ingredientsList.splice(fromIndex, 1);
+      ingredientsList.splice(toIndex, 0, movedItem);
+      state.ingredients = ingredientsList;
     }
   }
 });

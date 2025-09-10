@@ -1,5 +1,6 @@
 import { FC, memo, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
+import { nanoid } from 'nanoid';
 import { v4 as uuidv4 } from 'uuid';
 import { BurgerIngredientUI } from '@ui';
 import { TBurgerIngredientProps } from './type';
@@ -30,7 +31,7 @@ export const BurgerIngredient: FC<TBurgerIngredientProps> = memo(
 
       const ingredientWithUid: TConstructorIngredient = {
         ...ingredient,
-        uid
+        id: nanoid()
       };
 
       if (ingredient.type === 'bun') {

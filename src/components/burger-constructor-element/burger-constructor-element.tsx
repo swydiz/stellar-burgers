@@ -12,8 +12,8 @@ export const BurgerConstructorElement: FC<BurgerConstructorElementProps> = memo(
     const dispatch = useAppDispatch();
 
     const handleRemove = () => {
-      if (ingredient.uid) {
-        dispatch(removeIngredient(ingredient.uid));
+      if (ingredient.id) {
+        dispatch(removeIngredient(ingredient.id));
       }
     };
 

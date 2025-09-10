@@ -1,5 +1,5 @@
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { ConstructorPage } from '../../pages/constructor-page/constructor-page';
 import { AppHeader } from '../app-header/app-header';
@@ -14,11 +14,10 @@ import { OrderInfo } from '../order-info/order-info';
 import { IngredientDetails } from '../ingredient-details/ingredient-details';
 import { Modal } from '../modal/modal';
 import { ProtectedRoute } from '../protected-route/protected-route';
+import { NonAuthRoute } from '../nonauth-route';
 import { useAppDispatch } from '../../services/hooks/hooks';
 import { IngredientDetailPage } from '../../pages/ingredient-details/ingredient-details';
-import { OrderDetailsPage } from '../../pages/order-details/order-details';
 import { Feed } from '../../pages/feed/feed';
-
 import { fetchIngredients } from '../../services/reducers/ingredientsSlice';
 import { getUser } from '../../services/reducers/userSlice';
 import { OrderInfoPage } from '../../pages/order-info/order-info';
@@ -28,9 +27,30 @@ const App = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const background = location.state && location.state.background;
+  const [isModalOpen, setIsModalOpen] = useState(!!background);
+
+  useEffect(() => {
+    if (
+      location.pathname.startsWith('/profile/orders/') &&
+      !location.pathname.endsWith('/orders') &&
+      !background
+    ) {
+      navigate('/profile/orders', {
+        state: { background: location },
+        replace: true
+      });
+    } else {
+      setIsModalOpen(!!background);
+    }
+  }, [location, navigate, background]);
 
   const closeModal = () => {
-    navigate(-1);
+    setIsModalOpen(false);
+    setTimeout(() => {
+      if (background) {
+        navigate(background.pathname, { state: {}, replace: true });
+      }
+    }, 100);
   };
 
   useEffect(() => {
@@ -51,8 +71,14 @@ const App = () => {
           }
         />
         <Route path='/ingredients/:id' element={<IngredientDetailPage />} />
-        <Route path='/order/:number' element={<OrderDetailsPage />} />
-        <Route path='/profile/orders/:number' element={<OrderInfoPage />} />
+        <Route
+          path='/profile/orders/:number'
+          element={
+            <ProtectedRoute>
+              <OrderInfoPage />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path='/feed'
           element={
@@ -87,12 +113,12 @@ const App = () => {
         <Route path='*' element={<NotFound404 />} />
       </Routes>
 
-      {background && (
+      {isModalOpen && background && (
         <Routes>
           <Route
             path='/feed/:number'
             element={
-              <Modal onClose={closeModal}>
+              <Modal key='feed-order-modal' onClose={closeModal}>
                 <OrderInfo />
               </Modal>
             }
@@ -100,7 +126,11 @@ const App = () => {
           <Route
             path='/ingredients/:id'
             element={
-              <Modal title='Детали ингредиента' onClose={closeModal}>
+              <Modal
+                key='ingredient-modal'
+                title='Детали ингредиента'
+                onClose={closeModal}
+              >
                 <IngredientDetails />
               </Modal>
             }
@@ -109,7 +139,7 @@ const App = () => {
             path='/profile/orders/:number'
             element={
               <ProtectedRoute>
-                <Modal onClose={closeModal}>
+                <Modal key='profile-order-modal' onClose={closeModal}>
                   <OrderInfo />
                 </Modal>
               </ProtectedRoute>
