@@ -1,0 +1,16 @@
+.containerMain {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  align-items: center;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.title {
+  text-align: center;
+  width: 100%;
+  max-width: 1260px;
+  margin-left: auto;
+  margin-right: auto;
+}

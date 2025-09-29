@@ -1,0 +1,10 @@
+.main {
+  margin: 192px auto;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  overflow: hidden;
+  align-items: center;
+}

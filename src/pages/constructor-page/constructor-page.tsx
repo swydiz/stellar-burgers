@@ -1,18 +1,17 @@
-import { useSelector } from '../../services/store';
-
 import styles from './constructor-page.module.css';
-
 import { BurgerIngredients } from '../../components';
 import { BurgerConstructor } from '../../components';
 import { Preloader } from '../../components/ui';
 import { FC } from 'react';
+import { useAppSelector } from '../../services/hooks/hooks';
 
 export const ConstructorPage: FC = () => {
-  /** TODO: взять переменную из стора */
-  const isIngredientsLoading = false;
+  const isIngredientsLoading = useAppSelector(
+    (state) => state.ingredients.isLoading
+  );
 
   return (
-    <>
+    <div>
       {isIngredientsLoading ? (
         <Preloader />
       ) : (
@@ -28,6 +27,6 @@ export const ConstructorPage: FC = () => {
           </div>
         </main>
       )}
-    </>
+    </div>
   );
 };

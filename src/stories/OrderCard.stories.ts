@@ -22,7 +22,7 @@ export const DefaultOrderCard: Story = {
         {
           _id: '111',
           name: 'Булка',
-          type: 'top',
+          type: 'bun',
           proteins: 12,
           fat: 33,
           carbohydrates: 22,
@@ -37,7 +37,7 @@ export const DefaultOrderCard: Story = {
         {
           _id: '111',
           name: 'Булка',
-          type: 'top',
+          type: 'bun',
           proteins: 12,
           fat: 33,
           carbohydrates: 22,
@@ -50,7 +50,7 @@ export const DefaultOrderCard: Story = {
         {
           _id: '111',
           name: 'Начинка',
-          type: 'top',
+          type: 'main',
           proteins: 12,
           fat: 33,
           carbohydrates: 22,
@@ -63,7 +63,7 @@ export const DefaultOrderCard: Story = {
       ],
       remains: 2,
       total: 2,
-      date: new Date('2024-01-25'),
+      //   date: new Date('2024-01-25'),
       _id: '32',
       status: 'ready',
       name: 'Начинка',

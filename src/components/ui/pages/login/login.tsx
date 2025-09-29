@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, FormEvent, ChangeEvent } from 'react';
 import {
   Input,
   Button,
@@ -6,15 +6,21 @@ import {
 } from '@zlden/react-developer-burger-ui-components';
 import styles from '../common.module.css';
 import { Link } from 'react-router-dom';
-import { LoginUIProps } from './type';
+
+export type LoginUIProps = {
+  email: string;
+  password: string;
+  errorText: string;
+  handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
+  handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
+};
 
 export const LoginUI: FC<LoginUIProps> = ({
   email,
-  setEmail,
+  password,
   errorText,
   handleSubmit,
-  password,
-  setPassword
+  handleChange
 }) => (
   <main className={styles.container}>
     <div className={`pt-6 ${styles.wrapCenter}`}>
@@ -24,47 +30,47 @@ export const LoginUI: FC<LoginUIProps> = ({
         name='login'
         onSubmit={handleSubmit}
       >
-        <>
-          <div className='pb-6'>
-            <Input
-              type='email'
-              placeholder='E-mail'
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
-              name='email'
-              error={false}
-              errorText=''
-              size='default'
-            />
-          </div>
-          <div className='pb-6'>
-            <PasswordInput
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
-              name='password'
-            />
-          </div>
-          <div className={`pb-6 ${styles.button}`}>
-            <Button type='primary' size='medium' htmlType='submit'>
-              Войти
-            </Button>
-          </div>
-          {errorText && (
-            <p className={`${styles.error} text text_type_main-default pb-6`}>
-              {errorText}
-            </p>
-          )}
-        </>
+        <div className='pb-6'>
+          <Input
+            type='email'
+            placeholder='E-mail'
+            onChange={handleChange}
+            value={email}
+            name='email'
+            autoComplete='email'
+            error={false}
+            errorText=''
+            size='default'
+          />
+        </div>
+        <div className='pb-6'>
+          <PasswordInput
+            onChange={handleChange}
+            value={password}
+            name='password'
+            autoComplete='current-password'
+          />
+        </div>
+        <div className={`pb-6 ${styles.button}`}>
+          <Button type='primary' size='medium' htmlType='submit'>
+            Войти
+          </Button>
+        </div>
+        {errorText && (
+          <p className={`${styles.error} text text_type_main-default pb-6`}>
+            {errorText}
+          </p>
+        )}
       </form>
       <div className={`pb-4 ${styles.question} text text_type_main-default`}>
-        Вы - новый пользователь?
+        Вы&nbsp;— новый пользователь?
         <Link to='/register' className={`pl-2 ${styles.link}`}>
           Зарегистрироваться
         </Link>
       </div>
       <div className={`${styles.question} text text_type_main-default pb-6`}>
         Забыли пароль?
-        <Link to={'/forgot-password'} className={`pl-2 ${styles.link}`}>
+        <Link to='/forgot-password' className={`pl-2 ${styles.link}`}>
           Восстановить пароль
         </Link>
       </div>

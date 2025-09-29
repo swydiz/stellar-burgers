@@ -1,4 +1,13 @@
 import { FC } from 'react';
 import { AppHeaderUI } from '@ui';
 
-export const AppHeader: FC = () => <AppHeaderUI userName='' />;
+import { useAppSelector } from '../../services/hooks/hooks';
+
+export const AppHeader: FC = () => {
+  const user = useAppSelector((state) => state.user.user);
+  const isAuthenticated = !!user;
+
+  return (
+    <AppHeaderUI userName={user?.name} isAuthenticated={isAuthenticated} />
+  );
+};
