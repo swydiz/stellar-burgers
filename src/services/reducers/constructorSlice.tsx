@@ -1,33 +1,40 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TConstructorIngredient, TOrder } from '@utils-types';
-import { nanoid } from 'nanoid';
+import { TConstructorIngredient, TOrder } from '../../utils/types';
+import { v4 as uuid } from 'uuid'; // Используем uuid
 
-interface ConstructorState {
+export interface ConstructorState {
   bun: TConstructorIngredient | null;
   ingredients: TConstructorIngredient[];
   orderRequest: boolean;
   orderModalData: TOrder | null;
 }
 
-const initialState: ConstructorState = {
+export const initialState: ConstructorState = {
   bun: null,
   ingredients: [],
   orderRequest: false,
   orderModalData: null
 };
 
-const constructorSlice = createSlice({
+export const constructorSlice = createSlice({
   name: 'constructor',
   initialState,
   reducers: {
     setBun(state, action: PayloadAction<TConstructorIngredient>) {
-      state.bun = { ...action.payload, id: nanoid() };
+      state.bun = { ...action.payload, id: action.payload.id || uuid() };
     },
-    addIngredient(state, action: PayloadAction<TConstructorIngredient>) {
-      state.ingredients = [
-        ...state.ingredients,
-        { ...action.payload, id: nanoid() }
-      ];
+    addIngredient: {
+      reducer(state, action: PayloadAction<TConstructorIngredient>) {
+        state.ingredients = [...state.ingredients, { ...action.payload }];
+      },
+      prepare(ingredient: TConstructorIngredient) {
+        return {
+          payload: {
+            ...ingredient,
+            id: ingredient.id || uuid()
+          }
+        };
+      }
     },
     removeIngredient(state, action: PayloadAction<string>) {
       state.ingredients = state.ingredients.filter(
@@ -37,6 +44,8 @@ const constructorSlice = createSlice({
     clearConstructor(state) {
       state.bun = null;
       state.ingredients = [];
+      state.orderRequest = false;
+      state.orderModalData = null;
     },
     setOrderRequest(state, action: PayloadAction<boolean>) {
       state.orderRequest = action.payload;
