@@ -17,7 +17,7 @@ import { TConstructorIngredient, TOrder } from '../src/utils/types';
 // Моковые данные
 const mockBun: TConstructorIngredient = {
   _id: 'bun1',
-  id: 'mock-id-1',
+  id: 'mock-id-1', // Изначальный ID, будет перезаписан nanoid
   name: 'Test Bun',
   type: 'bun',
   proteins: 10,
@@ -32,7 +32,7 @@ const mockBun: TConstructorIngredient = {
 
 const mockIngredient: TConstructorIngredient = {
   _id: 'ingredient1',
-  id: 'mock-id-1',
+  id: 'mock-id-1', // Изначальный ID, будет перезаписан nanoid
   name: 'Test Ingredient',
   type: 'main',
   proteins: 10,
@@ -55,8 +55,11 @@ const mockOrder: TOrder = {
   updatedAt: '2025-09-29T18:39:00.000Z'
 };
 
+// Константа для уникального ID, сгенерированного nanoid
+const MOCK_ID = 'unique-id-1';
+
 jest.mock('nanoid', () => ({
-  nanoid: jest.fn().mockReturnValue('unique-id-1')
+  nanoid: jest.fn().mockReturnValue(MOCK_ID)
 }));
 
 describe('Тестирование constructorSlice', () => {
@@ -75,25 +78,25 @@ describe('Тестирование constructorSlice', () => {
   });
 
   it('Проверка setBun', () => {
-    const stateWithBun = {
+    const stateWithBun: ConstructorState = {
       ...initialState,
-      bun: { ...mockBun, id: 'unique-id-1' }
+      bun: { ...mockBun, id: MOCK_ID }
     };
     const state = constructorReducer(
       initialState,
-      setBun({ ...mockBun, id: 'unique-id-1' })
+      setBun({ ...mockBun, id: MOCK_ID })
     );
     expect(state).toEqual(stateWithBun);
   });
 
   it('Проверка addIngredient', () => {
-    const stateWithIngredient = {
+    const stateWithIngredient: ConstructorState = {
       ...initialState,
-      ingredients: [{ ...mockIngredient, id: 'unique-id-1' }]
+      ingredients: [{ ...mockIngredient, id: MOCK_ID }]
     };
     const state = constructorReducer(
       initialState,
-      addIngredient({ ...mockIngredient, id: 'unique-id-1' })
+      addIngredient({ ...mockIngredient, id: MOCK_ID })
     );
     expect(state).toEqual(stateWithIngredient);
   });
@@ -101,11 +104,11 @@ describe('Тестирование constructorSlice', () => {
   it('Проверка removeIngredient', () => {
     const stateWithIngredients: ConstructorState = {
       ...initialState,
-      ingredients: [{ ...mockIngredient, id: 'mock-id-1' }]
+      ingredients: [{ ...mockIngredient, id: MOCK_ID }]
     };
     const stateAfterRemove = constructorSlice.reducer(
       stateWithIngredients,
-      removeIngredient('mock-id-1')
+      removeIngredient(MOCK_ID)
     );
     expect(stateAfterRemove).toEqual(initialState);
   });
@@ -113,8 +116,8 @@ describe('Тестирование constructorSlice', () => {
   it('Проверка clearConstructor', () => {
     const stateWithData: ConstructorState = {
       ...initialState,
-      bun: { ...mockBun, id: 'mock-id-1' },
-      ingredients: [{ ...mockIngredient, id: 'mock-id-1' }],
+      bun: { ...mockBun, id: MOCK_ID },
+      ingredients: [{ ...mockIngredient, id: MOCK_ID }],
       orderRequest: true,
       orderModalData: mockOrder
     };
