@@ -1,8 +1,13 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { TOrder } from '@utils-types';
-import { getOrdersApi, getFeedsApi } from '../../utils/burger-api';
+import {
+  getOrdersApi,
+  getFeedsApi,
+  orderBurgerApi,
+  getOrderByNumberApi
+} from '../../utils/burger-api';
 
-interface OrdersState {
+export interface OrdersState {
   orders: TOrder[];
   total: number;
   totalToday: number;
@@ -49,6 +54,38 @@ export const fetchOrders = createAsyncThunk<
     return [...result];
   } catch {
     return rejectWithValue('Failed to fetch orders');
+  }
+});
+
+export const createOrder = createAsyncThunk<
+  TOrder,
+  string[],
+  { rejectValue: string }
+>('orders/createOrder', async (ingredients, { rejectWithValue }) => {
+  try {
+    const response = await orderBurgerApi(ingredients);
+    if (!response.success) throw new Error('Failed to create order');
+    return response.order;
+  } catch (err: unknown) {
+    const message =
+      err instanceof Error ? err.message : 'Failed to create order';
+    return rejectWithValue(message);
+  }
+});
+
+export const fetchOrder = createAsyncThunk<
+  TOrder,
+  number,
+  { rejectValue: string }
+>('orders/fetchOrder', async (orderNumber, { rejectWithValue }) => {
+  try {
+    const response = await getOrderByNumberApi(orderNumber);
+    if (!response.success) throw new Error('Failed to fetch order');
+    return response.orders[0];
+  } catch (err: unknown) {
+    const message =
+      err instanceof Error ? err.message : 'Failed to fetch order';
+    return rejectWithValue(message);
   }
 });
 
@@ -108,9 +145,38 @@ const ordersSlice = createSlice({
       .addCase(fetchFeeds.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? 'Unknown error';
+      })
+      .addCase(createOrder.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        createOrder.fulfilled,
+        (state, action: PayloadAction<TOrder>) => {
+          state.loading = false;
+          state.currentOrder = action.payload;
+          state.orders = [action.payload, ...state.orders];
+        }
+      )
+      .addCase(createOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? 'Unknown error';
+      })
+      .addCase(fetchOrder.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchOrder.fulfilled, (state, action: PayloadAction<TOrder>) => {
+        state.loading = false;
+        state.currentOrder = action.payload;
+      })
+      .addCase(fetchOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? 'Unknown error';
       });
   }
 });
 
 export const { addOrder, clearOrder, setCurrentOrder } = ordersSlice.actions;
 export default ordersSlice.reducer;
+export { ordersSlice, initialState };

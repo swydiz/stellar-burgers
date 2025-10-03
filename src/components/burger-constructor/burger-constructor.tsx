@@ -37,6 +37,7 @@ export const BurgerConstructor: FC = () => {
       const data = await orderBurgerApi(ingredientIds);
       setOrderModalData(data.order);
       dispatch(addOrder(data.order));
+      dispatch(clearConstructor());
     } catch (err) {
       console.error('Ошибка при создании заказа:', err);
     } finally {
@@ -47,7 +48,6 @@ export const BurgerConstructor: FC = () => {
   const closeOrderModal = () => {
     setOrderModalData(null);
     dispatch(clearOrder());
-    dispatch(clearConstructor());
   };
 
   const price = useMemo(

@@ -2,13 +2,13 @@ import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { TIngredient } from '@utils-types';
 import { getIngredientsApi } from '../../utils/burger-api';
 
-interface IngredientsState {
+export interface IngredientsState {
   items: TIngredient[];
   isLoading: boolean;
   hasError: boolean;
 }
 
-const initialState: IngredientsState = {
+export const initialState: IngredientsState = {
   items: [],
   isLoading: false,
   hasError: false
@@ -26,7 +26,7 @@ export const fetchIngredients = createAsyncThunk<TIngredient[], void>(
   }
 );
 
-const ingredientsSlice = createSlice({
+export const ingredientsSlice = createSlice({
   name: 'ingredients',
   initialState,
   reducers: {
